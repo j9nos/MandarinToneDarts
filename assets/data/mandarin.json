@@ -14845,5 +14845,45 @@
             1,
             3
         ]
+    },
+    {
+        "english": "north",
+        "simplified_hanzi": "北",
+        "traditional_hanzi": "北",
+        "pinyin": "běi",
+        "normalizedPinyin": "bei",
+        "accentedIndexes": [
+            1
+        ]
+    },
+    {
+        "english": "east",
+        "simplified_hanzi": "东",
+        "traditional_hanzi": "東",
+        "pinyin": "dōng",
+        "normalizedPinyin": "dong",
+        "accentedIndexes": [
+            1
+        ]
+    },
+    {
+        "english": "south",
+        "simplified_hanzi": "南",
+        "traditional_hanzi": "南",
+        "pinyin": "nán",
+        "normalizedPinyin": "nan",
+        "accentedIndexes": [
+            1
+        ]
+    },
+    {
+        "english": "west",
+        "simplified_hanzi": "西",
+        "traditional_hanzi": "西",
+        "pinyin": "xī",
+        "normalizedPinyin": "xi",
+        "accentedIndexes": [
+            1
+        ]
     }
 ]
