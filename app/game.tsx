@@ -79,6 +79,10 @@ export default function StartGameScreen() {
 
     useEffect(() => {
         if (0 === accentedIndexes.length) {
+            if (word.pinyin !== userPinyin) {
+                setErrorModalVisible(true);
+                return;
+            }
             progress.setValue(0);
             setStreak(streak + 1);
             setModalVisible(true);
