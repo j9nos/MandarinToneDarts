@@ -5,8 +5,8 @@ import { useScriptStorage } from "@/hooks/useScriptStorage";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
-import { useContext, useEffect, useState } from "react";
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Animated, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DataContext, MandarinData } from "./_layout";
 
 
@@ -54,48 +54,32 @@ export default function StartGameScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [errorModalVisible, setErrorModalVisible] = useState(false);
 
-    const [intervalId, setIntervalId] = useState<number | undefined>(undefined);
-    const [secondsElapsed, setSecondsElapsed] = useState(0);
+    const progress = useRef(new Animated.Value(0)).current;
 
 
     useEffect(() => {
-        if (MAX_SECONDS <= secondsElapsed) {
-            clearInterval(intervalId);
-            setIntervalId(undefined);
-            setErrorModalVisible(true);
-        }
-    }, [secondsElapsed]);
-
-
-    useEffect(() => {
-        if (undefined !== intervalId) {
-            clearInterval(intervalId);
-        }
-        setSecondsElapsed(0);
-        const xIntervalId = setInterval(() => {
-            setSecondsElapsed(prev => prev + 1);
-        }, 1000);
-
-        setIntervalId(xIntervalId);
-        return () => clearInterval(xIntervalId);
+        progress.setValue(0);
+        Animated.timing(progress, {
+            toValue: 1,
+            duration: MAX_SECONDS * 1000,
+            useNativeDriver: false,
+        }).start(({ finished }) => {
+            if (finished) {
+                setErrorModalVisible(true);
+            }
+        });
     }, [word]);
-
 
     useEffect(() => {
         return () => {
-            if (undefined !== intervalId) {
-                clearInterval(intervalId);
-            }
+            progress.stopAnimation();
         };
     }, []);
 
 
     useEffect(() => {
         if (0 === accentedIndexes.length) {
-            if (word.pinyin !== userPinyin) {
-                setErrorModalVisible(true);
-                return;
-            }
+            progress.setValue(0);
             setStreak(streak + 1);
             setModalVisible(true);
             setTimeout(() => {
@@ -169,7 +153,8 @@ export default function StartGameScreen() {
             </View>
 
             <View style={styles.timer}>
-                <View style={[styles.timerState, { width: `${secondsElapsed * 100 / MAX_SECONDS}%` }]}></View>
+                <Animated.View style={[styles.timerState,
+                { width: progress.interpolate({ inputRange: [0, 1], outputRange: ["0%", "100%"], }), },]} />
             </View>
 
 
