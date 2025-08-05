@@ -1,6 +1,5 @@
 
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -56,7 +55,6 @@ export default function RootLayout() {
         await Font.loadAsync({
           "WDXLLubrifontSC-Regular": require("../assets/fonts/WDXLLubrifontSC-Regular.ttf"),
           ...AntDesign.font,
-          ...Entypo.font,
           ...FontAwesome.font,
           ...FontAwesome5.font,
           ...FontAwesome6.font,

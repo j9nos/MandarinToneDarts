@@ -3,12 +3,15 @@ import { Design } from "@/constants/Design";
 import { usePlayerStorage } from "@/hooks/usePlayerStorage";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
 import { useContext, useEffect, useState } from "react";
-import { Alert, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { DataContext, MandarinData } from "./_layout";
+
+
+const MAX_SECONDS = 5;
+
 
 function getRandomWord(words: MandarinData[]): MandarinData {
     return words[Math.floor(Math.random() * words.length)];
@@ -49,15 +52,33 @@ export default function StartGameScreen() {
     const [userPinyin, setUserPinyin] = useState(word.normalizedPinyin);
     const [streak, setStreak] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [errorModalVisible, setErrorModalVisible] = useState(false);
 
+    const [intervalId, setIntervalId] = useState<number | undefined>(undefined);
+    const [secondsElapsed, setSecondsElapsed] = useState(0);
+
+
+    useEffect(() => {
+        if (MAX_SECONDS <= secondsElapsed) {
+            clearInterval(intervalId);
+            setIntervalId(undefined);
+            setErrorModalVisible(true);
+        }
+    }, [secondsElapsed]);
+
+
+    useEffect(() => {
+        if (undefined === intervalId) {
+            setSecondsElapsed(0);
+            setIntervalId(setInterval(() => setSecondsElapsed(prev => prev + 1), 1000));
+        };
+    }, [word]);
 
 
     useEffect(() => {
         if (0 === accentedIndexes.length) {
             if (word.pinyin !== userPinyin) {
-                Alert.alert("Game Over",
-                    `Your streak this round: ${streak}`);
-                router.push("/");
+                setErrorModalVisible(true);
                 return;
             }
             setStreak(streak + 1);
@@ -65,9 +86,9 @@ export default function StartGameScreen() {
             setTimeout(() => {
                 setModalVisible(false);
                 const randomWord = getRandomWord(words);
-                setWord(randomWord);
                 setAccentedIndexes(randomWord.accentedIndexes);
                 setUserPinyin(randomWord.normalizedPinyin);
+                setWord(randomWord);
             }, 750);
         }
     }, [accentedIndexes]);
@@ -119,18 +140,45 @@ export default function StartGameScreen() {
 
             <View style={styles.toneButtonContainer}>
                 <TouchableOpacity style={styles.toneButton} onPress={() => selectAccent(1)}>
-                    <Entypo name="minus" style={styles.tone} />
+                    <AntDesign name="minus" style={styles.tone} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.toneButton} onPress={() => selectAccent(2)}>
                     <AntDesign name="arrowup" style={styles.tone} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.toneButton} onPress={() => selectAccent(3)}>
-                    <FontAwesome6 name="wave-square" style={styles.tone} />
+                    <AntDesign name="down" style={styles.tone} />
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.toneButton} onPress={() => selectAccent(4)}>
                     <AntDesign name="arrowdown" style={styles.tone} />
                 </TouchableOpacity>
-            </View >
+            </View>
+
+            <View style={styles.timer}>
+                <View style={[styles.timerState, { width: `${secondsElapsed * 100 / MAX_SECONDS}%` }]}></View>
+            </View>
+
+
+            <Modal
+                animationType="slide"
+                visible={errorModalVisible}
+                onRequestClose={() => {
+                    router.push('/');
+                }}>
+                <View style={styles.errorModal}>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.scrollViewContent}
+                    >
+                        <Text style={[styles.text, styles.streak]}>
+                            <FontAwesome6 name="gripfire" style={styles.streakFire} />
+                            {streak}</Text>
+                        <Text style={[styles.text, styles.english]}>{word.english}</Text>
+                        <Text style={[styles.text, styles.hanzi]}>{word[script]}</Text>
+                        <Text style={[styles.text, styles.pinyin]}>{word?.pinyin}</Text>
+                    </ScrollView>
+                </View>
+            </Modal>
         </>
     );
 }
@@ -146,6 +194,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: Design.ColorTransparentGreen,
+    },
+    errorModal: {
+        flex: 1,
+        width: "100%",
+        backgroundColor: Design.ColorRed
     },
     correct: {
         fontSize: 70,
@@ -191,4 +244,21 @@ const styles = StyleSheet.create({
         fontSize: 50,
         color: Design.ColorBlue,
     },
+
+    timer: {
+        height: "2%",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    timerState: {
+        height: "100%",
+        backgroundColor: Design.ColorRed,
+    },
+    streak: {
+        color: Design.ColorYellow,
+        fontSize: 18,
+    },
+    streakFire: {
+        fontSize: 36
+    }
 });
