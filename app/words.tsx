@@ -39,6 +39,7 @@ export default function ShowWordsScreen() {
         clearButtonMode="while-editing"
       />
       <FlatList
+        style={{width:"100%"}}
         showsVerticalScrollIndicator={false}
         data={filteredWords}
         keyExtractor={(_, index) => index.toString()}
