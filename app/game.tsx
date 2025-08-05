@@ -68,11 +68,26 @@ export default function StartGameScreen() {
 
 
     useEffect(() => {
-        if (undefined === intervalId) {
-            setSecondsElapsed(0);
-            setIntervalId(setInterval(() => setSecondsElapsed(prev => prev + 1), 1000));
-        };
+        if (undefined !== intervalId) {
+            clearInterval(intervalId);
+        }
+        setSecondsElapsed(0);
+        const xIntervalId = setInterval(() => {
+            setSecondsElapsed(prev => prev + 1);
+        }, 1000);
+
+        setIntervalId(xIntervalId);
+        return () => clearInterval(xIntervalId);
     }, [word]);
+
+
+    useEffect(() => {
+        return () => {
+            if (undefined !== intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, []);
 
 
     useEffect(() => {
