@@ -21,6 +21,7 @@ export default function SettingsScreen() {
     const success = await changeName(trimmed);
     if (!success) {
       Alert.alert("Name too long", `Maximum ${MAX_NAME_LENGTH} characters allowed.`);
+      setNewName("");
       return;
     }
     router.push("/");
