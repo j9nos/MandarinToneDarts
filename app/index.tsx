@@ -8,34 +8,32 @@ export default function HomeScreen() {
   const router = useRouter();
 
   return (
-    <>
-      <View style={styles.container}>
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollViewContent}
+    <View style={styles.container}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
+      >
+        <TouchableOpacity
+          style={styles.touchableOpacity}
+          onPress={() => router.push("/game")}
         >
-          <TouchableOpacity
-            style={styles.touchableOpacity}
-            onPress={() => router.push("/game")}
-          >
-            <Ionicons name="game-controller-outline" style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.touchableOpacity}
-            onPress={() => router.push("/words")}
-          >
-            <MaterialIcons name="list" style={styles.icon} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.touchableOpacity}
-            onPress={() => router.push("/settings")}
-          >
-            <MaterialIcons name="settings" style={styles.icon} />
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
-    </>
+          <Ionicons name="game-controller-outline" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.touchableOpacity}
+          onPress={() => router.push("/words")}
+        >
+          <MaterialIcons name="list" style={styles.icon} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.touchableOpacity}
+          onPress={() => router.push("/settings")}
+        >
+          <MaterialIcons name="settings" style={styles.icon} />
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 }
 
