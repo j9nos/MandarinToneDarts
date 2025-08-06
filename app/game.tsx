@@ -1,14 +1,14 @@
 import { Design } from "@/constants/Design";
 
+import mandarinData from "@/assets/data/mandarin.json";
 import { usePlayerStorage } from "@/hooks/usePlayerStorage";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Animated, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { DataContext, MandarinData } from "./_layout";
-
+import { MandarinData } from "./_layout";
 
 const MAX_SECONDS = 5;
 
@@ -43,10 +43,10 @@ function replaceCharAt(str: string, index: number, replacement: string): string 
 
 export default function StartGameScreen() {
     const router = useRouter();
-    const words = useContext(DataContext);
     const persistStreak = usePlayerStorage((s) => s.updateStreak);
     const script = useScriptStorage((s) => s.script);
 
+    const [words] = useState<MandarinData[]>(mandarinData);
     const [word, setWord] = useState(getRandomWord(words));
     const [accentedIndexes, setAccentedIndexes] = useState<number[]>(word.accentedIndexes);
     const [userPinyin, setUserPinyin] = useState(word.normalizedPinyin);

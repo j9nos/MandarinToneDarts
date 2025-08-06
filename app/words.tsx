@@ -1,29 +1,30 @@
 import { Design } from "@/constants/Design";
 
+import mandarinData from "@/assets/data/mandarin.json";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
-import { DataContext, MandarinData } from "./_layout";
+import { MandarinData } from "./_layout";
 
 export default function ShowWordsScreen() {
-  const words = useContext(DataContext);
+  const [words] = useState<MandarinData[]>(mandarinData);
 
   const script = useScriptStorage((s) => s.script);
   const [search, setSearch] = useState("");
-  const [filteredWords, setFilteredWords] = useState<MandarinData[]>();
 
-  useEffect(() => {
-    if (!words) { return };
-    if ("" === search.trim()) {
-      setFilteredWords(words);
-    } else {
-      const lowercased = search.toLowerCase();
-      const filtered = words.filter((word) =>
-        word.english.toLowerCase().includes(lowercased) ||
-        word.normalizedPinyin.toLowerCase().includes(lowercased)
-      );
-      setFilteredWords(filtered);
+  const filteredWords = useMemo(() => {
+    if (!words) {
+      return [];
     }
+    const trimmed = search.trim().toLowerCase();
+    if ("" === trimmed) {
+      return words;
+    }
+    return words.filter((word) =>
+      word.english.toLowerCase().includes(trimmed) ||
+      word.normalizedPinyin.toLowerCase().includes(trimmed) ||
+      word.pinyin.toLowerCase().includes(trimmed)
+    );
   }, [search, words]);
 
   return (
@@ -39,14 +40,14 @@ export default function ShowWordsScreen() {
         clearButtonMode="while-editing"
       />
       <FlatList
-        style={{width:"100%"}}
+        style={{ width: "100%" }}
         showsVerticalScrollIndicator={false}
         data={filteredWords}
         keyExtractor={(_, index) => index.toString()}
         renderItem={({ item }) => <View style={styles.wordContainer}>
-          <Text style={styles.word}>{item?.english}</Text>
-          <Text style={styles.word}>{item?.[script]}</Text>
-          <Text style={styles.word}>{item?.pinyin}</Text>
+          <Text style={styles.word}>{item.english}</Text>
+          <Text style={styles.word}>{item[script]}</Text>
+          <Text style={styles.word}>{item.pinyin}</Text>
         </View>}
       />
     </View>

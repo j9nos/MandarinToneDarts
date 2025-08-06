@@ -9,13 +9,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
-import mandarin from "@/assets/data/mandarin.json";
 import TopBar from "@/components/TopBar";
 import { Design } from "@/constants/Design";
 import { usePlayerStorage } from "@/hooks/usePlayerStorage";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
 import { Slot } from "expo-router";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -38,15 +37,14 @@ const TEST_DATA = [
 
 export type MandarinData = typeof TEST_DATA[number];
 
-export const DataContext = createContext<MandarinData[]>(TEST_DATA);
 
 export default function RootLayout() {
 
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
-  const [words, setWords] = useState<MandarinData[]>(TEST_DATA);
   const loadPlayer = usePlayerStorage((s) => s.loadPlayer);
   const player = usePlayerStorage((s) => s.player);
   const loadScript = useScriptStorage((s) => s.loadScript);
+  const script = useScriptStorage((s) => s.script);
 
 
   useEffect(() => {
@@ -62,7 +60,6 @@ export default function RootLayout() {
           ...MaterialIcons.font,
         });
         setFontsLoaded(true);
-        setWords(mandarin);
         loadPlayer();
         loadScript();
       } catch (e) {
@@ -76,12 +73,12 @@ export default function RootLayout() {
 
 
   useEffect(() => {
-    if (fontsLoaded && words && player) {
+    if (fontsLoaded && player && script) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, words, player]);
+  }, [fontsLoaded, player, script]);
 
-  if (!fontsLoaded || !words || !player) {
+  if (!fontsLoaded || !player || !script) {
     return null;
   }
 
@@ -90,9 +87,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <TopBar player={player} />
-        <DataContext.Provider value={words}>
-          <Slot />
-        </DataContext.Provider>
+        <Slot />
       </SafeAreaView>
     </SafeAreaProvider>
   );
