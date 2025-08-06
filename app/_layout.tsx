@@ -97,33 +97,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Design.ColorYellow,
-  },
-  topBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-  },
-  text: {
-    fontSize: 18,
-    color: Design.ColorBlue,
-    fontFamily: Design.FontFamily,
-  },
-  name: {
-    fontSize: 18,
-    color: Design.ColorBlue,
-  },
-  streakContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  streakIcon: {
-    fontSize: 18,
-    color: Design.ColorBlue,
-    marginRight: 4,
-  },
-  streakText: {
-    fontSize: 18,
-    color: Design.ColorBlue,
-    fontFamily: Design.FontFamily,
-  },
+  }
 });
