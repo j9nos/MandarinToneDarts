@@ -40,7 +40,7 @@ export default function ShowWordsScreen() {
         clearButtonMode="while-editing"
       />
       <FlatList
-        style={{ width: "100%" }}
+        style={styles.flatList}
         showsVerticalScrollIndicator={false}
         data={filteredWords}
         keyExtractor={(_, index) => index.toString()}
@@ -59,6 +59,9 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     alignItems: "center"
+  },
+  flatList: {
+    width: "100%"
   },
   wordContainer: {
     alignItems: "center",
