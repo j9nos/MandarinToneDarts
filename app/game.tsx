@@ -179,7 +179,7 @@ export default function StartGameScreen() {
                             {streak}</Text>
                         <Text style={[styles.text, styles.english]}>{word.english}</Text>
                         <Text style={[styles.text, styles.hanzi]}>{word[script]}</Text>
-                        <Text style={[styles.text, styles.pinyin]}>{word?.pinyin}</Text>
+                        <Text style={[styles.text, styles.pinyin]}>{word.pinyin}</Text>
                     </ScrollView>
                 </View>
             </Modal>
