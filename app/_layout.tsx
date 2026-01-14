@@ -5,8 +5,8 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
 import * as Font from "expo-font";
+import * as Speech from "expo-speech";
 import * as SplashScreen from "expo-splash-screen";
 
 import TopBar from "@/components/TopBar";
@@ -60,8 +60,19 @@ export default function RootLayout() {
           ...MaterialIcons.font,
         });
         setFontsLoaded(true);
-        loadPlayer();
-        loadScript();
+        await loadPlayer();
+        await loadScript();
+        await new Promise((resolve) => {
+          Speech.speak('', {
+            language: "zh-CN", rate: 0.75,
+            pitch: 1.0,
+            onDone: resolve,
+            onStopped: resolve,
+            onError: resolve,
+          });
+        });
+
+        await SplashScreen.hideAsync();
       } catch (e) {
         console.warn("Initialization error", e);
       }
@@ -69,14 +80,6 @@ export default function RootLayout() {
 
     initializeApp();
   }, []);
-
-
-
-  useEffect(() => {
-    if (fontsLoaded && player && script) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, player, script]);
 
   if (!fontsLoaded || !player || !script) {
     return null;
