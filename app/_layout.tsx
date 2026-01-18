@@ -6,13 +6,13 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Font from "expo-font";
-import * as Speech from "expo-speech";
 import * as SplashScreen from "expo-splash-screen";
 
 import TopBar from "@/components/TopBar";
 import { Design } from "@/constants/Design";
 import { usePlayerStorage } from "@/hooks/usePlayerStorage";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
+import { initSpeech } from "@/utils/speech";
 import { Slot } from "expo-router";
 import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -62,15 +62,7 @@ export default function RootLayout() {
         setFontsLoaded(true);
         await loadPlayer();
         await loadScript();
-        await new Promise((resolve) => {
-          Speech.speak('', {
-            language: "zh-CN", rate: 0.75,
-            pitch: 1.0,
-            onDone: resolve,
-            onStopped: resolve,
-            onError: resolve,
-          });
-        });
+        await initSpeech();
 
         await SplashScreen.hideAsync();
       } catch (e) {

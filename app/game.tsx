@@ -6,7 +6,8 @@ import { useScriptStorage } from "@/hooks/useScriptStorage";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useRouter } from "expo-router";
-import * as Speech from 'expo-speech';
+
+import { speak } from "@/utils/speech";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { MandarinData } from "./_layout";
@@ -57,13 +58,7 @@ export default function StartGameScreen() {
 
     const progress = useRef(new Animated.Value(0)).current;
 
-    const speak = (toBeSpoken: string) => {
-        Speech.speak(toBeSpoken, {
-            language: 'zh-CN',
-            pitch: 1.0,
-            rate: 0.75,
-        });
-    };
+
 
 
     useEffect(() => {

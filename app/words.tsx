@@ -2,8 +2,9 @@ import { Design } from "@/constants/Design";
 
 import mandarinData from "@/assets/data/mandarin.json";
 import { useScriptStorage } from "@/hooks/useScriptStorage";
+import { speak } from "@/utils/speech";
 import React, { useMemo, useState } from "react";
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { MandarinData } from "./_layout";
 
 export default function ShowWordsScreen() {
@@ -44,11 +45,11 @@ export default function ShowWordsScreen() {
         showsVerticalScrollIndicator={false}
         data={filteredWords}
         keyExtractor={(_, index) => index.toString()}
-        renderItem={({ item }) => <View style={styles.wordContainer}>
+        renderItem={({ item }) => <TouchableOpacity style={styles.wordContainer} onPress={() => speak(item.simplified_hanzi)} >
           <Text style={styles.word}>{item.english}</Text>
           <Text style={styles.word}>{item[script]}</Text>
           <Text style={styles.word}>{item.pinyin}</Text>
-        </View>}
+        </TouchableOpacity>}
       />
     </View>
   );
