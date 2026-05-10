@@ -1,0 +1,82 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: mtd_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: mandarintonedarts_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mtd-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d mandarintonedarts_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s 
+
+  redis:
+    image: redis:7-alpine
+    container_name: mtd_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - mtd-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend/mandarintonedarts
+    container_name: mtd_backend
+    restart: always 
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+      - "5005:5005" #debug
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mandarintonedarts_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin123
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - APP_JWT_SECRET=MyMandarinToneDartsSuperSecretKeyThatIsAtLeast32CharsLong
+      - APP_JWT_EXPIRATION=86400000
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 # debug
+    networks:
+      - mtd-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend/mandarintonedarts
+    container_name: mtd_frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:80"
+    networks:
+      - mtd-network
+
+networks:
+  mtd-network:
+    driver: bridge

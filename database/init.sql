@@ -1,0 +1,12 @@
+CREATE SCHEMA IF NOT EXISTS sec;
+
+CREATE TABLE IF NOT EXISTS sec.users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    highest_score INTEGER DEFAULT 0,
+    language_mode VARCHAR(20) NOT NULL DEFAULT 'SIMPLIFIED',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE sec.users ADD CONSTRAINT users_language_mode_check CHECK (language_mode IN ('SIMPLIFIED', 'TRADITIONAL'));
