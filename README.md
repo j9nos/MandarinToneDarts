@@ -1,2 +1,2 @@
-!\[Dragon](.readme/dragon.png "This is a sample image.")
+!\[Dragon Logo](.readme/dragon.png)
 
