@@ -39,7 +39,7 @@ Mandarin Chinese has four primary tones. The same syllable can have different me
 
 ## 🚀 Quick Start
 
-The entire project is fully containerized using Docker and Docker Compose.
+The entire project is fully containerized using Docker.
 ```bash
 docker-compose up -d --build
 ```
