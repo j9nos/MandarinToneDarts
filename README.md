@@ -43,3 +43,13 @@ The entire project is fully containerized using Docker.
 ```bash
 docker-compose up -d --build
 ```
+
+## 🧰 Tech Stack
+
+This project uses a modern full-stack architecture designed for scalability and performance:
+
+- **Frontend:** React.js (interactive UI for gameplay)
+- **Backend:** Spring Boot (REST API + game logic)
+- **Database:** PostgreSQL (user data management)
+- **Caching Layer:** Redis (cached vocabulary data)
+- **Infrastructure:** Docker (containerized deployment)
