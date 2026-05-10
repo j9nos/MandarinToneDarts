@@ -40,11 +40,6 @@ Mandarin Chinese has four primary tones. The same syllable can have different me
 ## 🚀 Quick Start
 
 The entire project is fully containerized using Docker and Docker Compose.
-
-### 🧰 Prerequisites
-
-Make sure you have installed:
-
-- [Docker](https://www.docker.com/products/docker-desktop/)
-- [Docker Compose](https://docs.docker.com/compose/)
-
+```bash
+docker-compose up -d --build
+```
