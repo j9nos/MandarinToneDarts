@@ -62,5 +62,5 @@ This project uses a modern full-stack architecture designed for scalability and 
 - **Backend:** Spring Boot (REST API + game logic)
 - **Database:** PostgreSQL (user data management)
 - **Caching Layer:** Redis (cached vocabulary data)
-- **Decomposer Service:** 
+- **Decomposer Service:** Flask & HanziChaizi (Microservice for linguistic breakdown and character analysis)
 - **Infrastructure:** Docker (containerized deployment)
