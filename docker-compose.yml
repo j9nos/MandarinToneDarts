@@ -77,6 +77,16 @@ services:
     networks:
       - mtd-network
 
+  decomposer:
+    build:
+      context: ./decomposer
+    container_name: mtd_decomposer
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - mtd-network  
+
 networks:
   mtd-network:
     driver: bridge

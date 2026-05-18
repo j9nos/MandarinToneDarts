@@ -58,5 +58,53 @@
     "simplified_hanzi": "铅笔",
     "traditional_hanzi": "鉛筆",
     "pinyin": "qiān bǐ"
+  },
+  {
+    "english": "to win",
+    "simplified_hanzi": "赢",
+    "traditional_hanzi": "贏",
+    "pinyin": "yíng"
+  },
+  {
+    "english": "to lose",
+    "simplified_hanzi": "输",
+    "traditional_hanzi": "輸",
+    "pinyin": "shū"
+  },
+  {
+    "english": "to know",
+    "simplified_hanzi": "知道",
+    "traditional_hanzi": "知道",
+    "pinyin": "zhī dào"
+  },
+  {
+    "english": "to think",
+    "simplified_hanzi": "想",
+    "traditional_hanzi": "想",
+    "pinyin": "xiǎng"
+  },
+  {
+    "english": "to stand",
+    "simplified_hanzi": "站",
+    "traditional_hanzi": "站",
+    "pinyin": "zhàn"
+  },
+  {
+    "english": "to open",
+    "simplified_hanzi": "开",
+    "traditional_hanzi": "開",
+    "pinyin": "kāi"
+  },
+  {
+    "english": "to close",
+    "simplified_hanzi": "关",
+    "traditional_hanzi": "關",
+    "pinyin": "guān"
+  },
+  {
+    "english": "to sit",
+    "simplified_hanzi": "坐",
+    "traditional_hanzi": "坐",
+    "pinyin": "zuò"
   }
 ]
