@@ -19,6 +19,16 @@ Players are presented with Mandarin syllables and must quickly identify the corr
 
 ---
 
+## 🚀 New Features
+
+- Decomposer Service: Clicked elements in the word list will now be presented in a beautifully broken-down, decomposed format to help you analyze individual characters and components.
+<p align="center">
+  <img src=".readme/decomposer.gif" alt="Decomposer Demo">
+</p>
+
+
+---
+
 ## 🏮 Mandarin Tones Explained
 
 Mandarin Chinese has four primary tones. The same syllable can have different meanings depending on tone:
@@ -52,4 +62,5 @@ This project uses a modern full-stack architecture designed for scalability and 
 - **Backend:** Spring Boot (REST API + game logic)
 - **Database:** PostgreSQL (user data management)
 - **Caching Layer:** Redis (cached vocabulary data)
+- **Decomposer Service:** 
 - **Infrastructure:** Docker (containerized deployment)
