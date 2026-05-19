@@ -3,6 +3,29 @@ import { getRandomWord, updateHighestScore } from '../security/game';
 import fireImg from '../assets/fire.png';
 
 const MAX_SECONDS = 5;
+const WS_URL = process.env.REACT_APP_WS_URL || 'ws://localhost:8001/ws/transcribe';
+
+const processorCode = `
+  class PCMConvertProcessor extends AudioWorkletProcessor {
+    process(inputs, outputs, parameters) {
+      const input = inputs[0];
+      if (input && input.length > 0) {
+        const inputChannel = input[0];
+        const l = inputChannel.length;
+        const pcm16 = new Int16Array(l);
+        
+        for (let i = 0; i < l; i++) {
+          let s = Math.max(-1, Math.min(1, inputChannel[i]));
+          pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        
+        this.port.postMessage(pcm16.buffer, [pcm16.buffer]);
+      }
+      return true;
+    }
+  }
+  registerProcessor('pcm-convert-processor', PCMConvertProcessor);
+`;
 
 const addAccent = (vowel, tone) => {
     const tones = {
@@ -11,7 +34,6 @@ const addAccent = (vowel, tone) => {
         3: "\u030C",
         4: "\u0300"
     };
-
     return (vowel.normalize("NFD") + tones[tone]).normalize("NFC");
 };
 
@@ -31,35 +53,18 @@ const Game = ({ user, setUser }) => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
 
+    const [isMicOn, setIsMicOn] = useState(false);
+    const [spokenText, setSpokenText] = useState("");
+    const [micError, setMicError] = useState(null);
+
     const timerRef = useRef(null);
     const hasSubmittedScoreRef = useRef(false);
 
+    const wsRef = useRef(null);
+    const audioContextRef = useRef(null);
+    const streamRef = useRef(null);
+
     const isTraditional = user?.languageMode === 'TRADITIONAL';
-
-    useEffect(() => {
-        const style = document.createElement('style');
-
-        style.innerHTML = `
-            @keyframes errorRise {
-                from { transform: scaleY(0); }
-                to { transform: scaleY(1); }
-            }
-
-            @keyframes errorFade {
-                from { opacity: 0; transform: translateY(20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-
-            @keyframes successPop {
-                0% { transform: scale(0.7); opacity: 0; }
-                70% { transform: scale(1.1); opacity: 1; }
-                100% { transform: scale(1); opacity: 1; }
-            }
-        `;
-
-        document.head.appendChild(style);
-        return () => document.head.removeChild(style);
-    }, []);
 
     const stopTimer = () => clearInterval(timerRef.current);
 
@@ -93,8 +98,10 @@ const Game = ({ user, setUser }) => {
         setWord(data);
         setAccentedIndexes(data.accentedIndexes);
         setUserPinyin(data.normalizedPinyin);
+        
+        setSpokenText(""); 
         setShowError(false);
-        setShowSuccess(false);
+        setShowSuccess(false); 
 
         startTimer();
     }, [startTimer]);
@@ -134,11 +141,104 @@ const Game = ({ user, setUser }) => {
         submitScore();
     }, [showError, streak, setUser]);
 
+    const startRecording = async () => {
+        try {
+            setMicError(null);
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            streamRef.current = stream;
+
+            wsRef.current = new WebSocket(WS_URL);
+            wsRef.current.binaryType = 'arraybuffer';
+
+            wsRef.current.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'partial' || data.type === 'final') {
+                    setSpokenText(data.text);
+                }
+            };
+
+            audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
+                sampleRate: 16000,
+            });
+
+            const blob = new Blob([processorCode], { type: 'application/javascript' });
+            const objectURL = URL.createObjectURL(blob);
+            await audioContextRef.current.audioWorklet.addModule(objectURL);
+
+            const source = audioContextRef.current.createMediaStreamSource(stream);
+            const recorderNode = new AudioWorkletNode(audioContextRef.current, 'pcm-convert-processor');
+
+            recorderNode.port.onmessage = (e) => {
+                const pcm16Buffer = e.data;
+                if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                    wsRef.current.send(pcm16Buffer);
+                }
+            };
+
+            source.connect(recorderNode);
+            recorderNode.connect(audioContextRef.current.destination);
+        } catch (err) {
+            console.error(err);
+            setMicError("Could not access microphone.");
+            setIsMicOn(false);
+        }
+    };
+
+    const stopRecording = useCallback(() => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+            streamRef.current = null; 
+        }
+        
+        if (audioContextRef.current) {
+            if (audioContextRef.current.state !== 'closed') {
+                audioContextRef.current.close().catch(err => 
+                    console.warn("AudioContext close ignored:", err)
+                );
+            }
+            audioContextRef.current = null;
+        }
+        
+        if (wsRef.current) {
+            if (wsRef.current.readyState === WebSocket.OPEN || wsRef.current.readyState === WebSocket.CONNECTING) {
+                wsRef.current.close();
+            }
+            wsRef.current = null;
+        }
+        
+        setSpokenText("");
+    }, []);
+
+    useEffect(() => {
+        if (isMicOn) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+        return () => stopRecording();
+    }, [isMicOn, stopRecording]);
+
+    useEffect(() => {
+        if (showSuccess || showError) {
+            setSpokenText("");
+        }
+    }, [showSuccess, showError]);
+
+    useEffect(() => {
+        if (!word || showError || showSuccess || !spokenText) return;
+
+        const hanzi = isTraditional ? word.traditional_hanzi : word.simplified_hanzi;
+
+        if (spokenText.includes(hanzi)) {
+            setUserPinyin(word.pinyin);
+            setAccentedIndexes([]);
+        }
+    }, [spokenText, word, showError, showSuccess, isTraditional]);
+
     const selectAccent = (tone) => {
         if (!accentedIndexes.length || showError) return;
 
         const index = accentedIndexes[0];
-
         const accented = addAccent(userPinyin[index], tone);
 
         setUserPinyin(prev => replaceCharAt(prev, index, accented));
@@ -171,10 +271,11 @@ const Game = ({ user, setUser }) => {
             setShowSuccess(true);
             setStreak(s => s + 1);
 
-            setTimeout(() => {
-                setShowSuccess(false);
+            const timeoutId = setTimeout(() => {
                 loadWord();
             }, 750);
+            
+            return () => clearTimeout(timeoutId);
         }
     }, [accentedIndexes, userPinyin, word, showError, handleGameOver, loadWord]);
 
@@ -202,6 +303,19 @@ const Game = ({ user, setUser }) => {
             )}
 
             <div className="gameCard">
+                <button
+                    className={`micToggleBtn ${isMicOn ? 'on' : 'off'}`}
+                    onClick={() => setIsMicOn(prev => !prev)}
+                >
+                    {isMicOn ? "STOP RECORDING" : "START RECORDING"}
+                </button>
+
+                {micError && <p style={{ color: 'red', fontSize: '0.8rem' }}>{micError}</p>}
+
+                <div className="spokenText">
+                    {isMicOn && (spokenText || "Listening...")}
+                </div>
+
                 <p className="gameEnglish">{word.english}</p>
 
                 <h1 className="gameHanzi">{hanzi}</h1>

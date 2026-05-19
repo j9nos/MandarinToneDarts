@@ -74,6 +74,8 @@ services:
         condition: service_healthy
     ports:
       - "3000:80"
+    environment:
+      - REACT_APP_WS_URL=ws://localhost:8001/ws/transcribe
     networks:
       - mtd-network
 
@@ -86,6 +88,16 @@ services:
       - "8000:8000"
     networks:
       - mtd-network  
+
+  speech:
+    build:
+      context: ./speech
+    container_name: mtd_speech
+    restart: always
+    ports:
+      - "8001:8000"
+    networks:
+      - mtd-network
 
 networks:
   mtd-network:

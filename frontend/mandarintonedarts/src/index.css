@@ -898,3 +898,73 @@ input:focus {
   border: 2px solid var(--color-blue);
   box-shadow: 0 3px 0px rgba(0, 0, 0, 0.15);
 }
+
+
+.micToggleBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.2s;
+  color: white;
+}
+
+.micToggleBtn.on {
+  background-color: #ff4d4d;
+}
+
+.micToggleBtn.off {
+  background-color: #00cc66;
+}
+
+.spokenText {
+  min-height: 24px;
+  color: #7f8c8d;
+  font-style: italic;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+
+
+
+@keyframes errorRise {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes errorFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes successPop {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
