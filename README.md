@@ -2,6 +2,12 @@
   <img src=".readme/dragon.png" width="150" alt="Mandarin Tone Darts Logo">
 </p>
 
+<p align="center">
+  <a href="https://github.com/your-username/mandarintonedarts">
+    <img src="https://img.shields.io/badge/NEW-Voice%20Detection%20Supported-brightgreen?style=for-the-badge&logo=vosk" alt="Voice Detection Supported">
+  </a>
+</p>
+
 # 🎯 Mandarin Tone Darts
 
 A gamified approach to mastering Mandarin Chinese tones.  
