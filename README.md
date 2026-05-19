@@ -20,6 +20,7 @@ Players are presented with Mandarin syllables and must quickly identify the corr
 ---
 
 ## 🚀 New Features
+- Speech Service: Offline audio analysis using the Vosk engine, allowing users to practice their Mandarin pronunciation and receive immediate, reflexive tone recognition feedback.
 
 - Decomposer Service: Clicked elements in the word list will now be presented in a beautifully broken-down, decomposed format to help you analyze individual characters and components.
 <p align="center">
