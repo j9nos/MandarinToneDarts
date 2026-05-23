@@ -106,5 +106,47 @@
     "simplified_hanzi": "坐",
     "traditional_hanzi": "坐",
     "pinyin": "zuò"
+  },
+  {
+    "english": "to ask",
+    "simplified_hanzi": "问",
+    "traditional_hanzi": "問",
+    "pinyin": "wèn"
+  },
+  {
+    "english": "to answer",
+    "simplified_hanzi": "回答",
+    "traditional_hanzi": "回答",
+    "pinyin": "huí dá"
+  },
+  {
+    "english": "to help",
+    "simplified_hanzi": "帮助",
+    "traditional_hanzi": "幫助",
+    "pinyin": "bāng zhù"
+  },
+  {
+    "english": "to like",
+    "simplified_hanzi": "喜欢",
+    "traditional_hanzi": "喜歡",
+    "pinyin": "xǐ huan"
+  },
+  {
+    "english": "to kiss",
+    "simplified_hanzi": "接吻",
+    "traditional_hanzi": "接吻",
+    "pinyin": "jiē wěn"
+  },
+  {
+    "english": "to eat",
+    "simplified_hanzi": "吃",
+    "traditional_hanzi": "吃",
+    "pinyin": "chī"
+  },
+  {
+    "english": "to drink",
+    "simplified_hanzi": "喝",
+    "traditional_hanzi": "喝",
+    "pinyin": "hē"
   }
 ]
