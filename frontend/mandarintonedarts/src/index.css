@@ -627,6 +627,7 @@ input:focus {
 
   color: var(--color-blue);
   cursor: pointer;
+  font-family: var(--font-family-main);
 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   transition: transform 0.15s ease;

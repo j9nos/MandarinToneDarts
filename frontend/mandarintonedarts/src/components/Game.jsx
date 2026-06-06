@@ -157,6 +157,13 @@ const Game = ({ user, setUser }) => {
                 }
             };
 
+            wsRef.current.onclose = () => {
+                if (streamRef.current) {
+                    setMicError("Server connection lost. Please toggle the microphone to try again.");
+                    setIsMicOn(false);
+                }
+            };
+
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
                 sampleRate: 16000,
             });
@@ -164,6 +171,8 @@ const Game = ({ user, setUser }) => {
             const blob = new Blob([processorCode], { type: 'application/javascript' });
             const objectURL = URL.createObjectURL(blob);
             await audioContextRef.current.audioWorklet.addModule(objectURL);
+            
+            URL.revokeObjectURL(objectURL);
 
             const source = audioContextRef.current.createMediaStreamSource(stream);
             const recorderNode = new AudioWorkletNode(audioContextRef.current, 'pcm-convert-processor');
@@ -227,13 +236,17 @@ const Game = ({ user, setUser }) => {
     useEffect(() => {
         if (!word || showError || showSuccess || !spokenText) return;
 
-        const hanzi = isTraditional ? word.traditional_hanzi : word.simplified_hanzi;
+        const cleanSpoken = spokenText.toLowerCase().trim().normalize("NFC");
+        const cleanTarget = word.pinyin.toLowerCase().trim().normalize("NFC");
 
-        if (spokenText.includes(hanzi)) {
+        const spacelessSpoken = cleanSpoken.replace(/\s+/g, '');
+        const spacelessTarget = cleanTarget.replace(/\s+/g, '');
+
+        if (spacelessSpoken.includes(spacelessTarget)) {
             setUserPinyin(word.pinyin);
             setAccentedIndexes([]);
         }
-    }, [spokenText, word, showError, showSuccess, isTraditional]);
+    }, [spokenText, word, showError, showSuccess]);
 
     const selectAccent = (tone) => {
         if (!accentedIndexes.length || showError) return;

@@ -2,3 +2,4 @@ fastapi>=0.103.0
 uvicorn[standard]>=0.23.2
 websockets>=11.0.3
 vosk>=0.3.45
+pypinyin>=0.50.0
